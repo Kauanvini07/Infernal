@@ -11,7 +11,8 @@ texturas_sheet = {
 # Insira aqui a imagem, o tipo e o caminho dela para ser carregado.
 
 texturas_por_imagem = {
-    'fundo': {'tipo': 'background', 'caminho': 'imgs/bg.jpg', 'tamanho': (SCREEN_WIDTH, SCREEN_WIDTH)},
+    'fundo': {'tipo': 'background', 'caminho': 'Screenshot_226.png', 'tamanho': (SCREEN_WIDTH, SCREEN_WIDTH)},
+    'tijolo': {'tipo': 'bloco', 'caminho': 'imgs/tijolo.png', 'tamanho': (BLOCO_TAM, BLOCO_TAM)},
     'inimigo': {'tipo': 'inimigo', 'caminho': 'imgs/inimigo.png', 'tamanho': (64,64)},
     'inimigo_hit': {'tipo': 'inimigo', 'caminho': 'imgs/inimigo_hit.png', 'tamanho': (32,32)}
 }
