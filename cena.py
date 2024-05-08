@@ -5,7 +5,7 @@ import pygame
 from globais import *
 from player import Player
 from sprite import Entidade, Mob
-from texturas import texturas_por_imagem, texturas_sheet
+from texturas import texturas_por_imagem, texturas_sheet, textura_ataque
 
 class Camera:
 
@@ -43,6 +43,7 @@ class Cena:
         self.entidade = Entidade([self.sprites])
         self.blocos = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
+        self.bola_de_fogo = pygame.sprite.Group()
 
         
         with open("reste.csv") as data:
@@ -64,18 +65,17 @@ class Cena:
             
 
         # Player
-        self.player = Player([self.sprites], self.textura_sheet, (240, 1872), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos})
+        self.player = Player(app,[self.sprites], self.textura_sheet, (240, 1872), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo})
         self.camera = Camera(self.app,800,600)
 
         # Inimigo
         Mob([self.sprites], self.textura_solo['inimigo'], posicao=(250, 100), parametros={'grupo_blocos': self.blocos, 'player': self.player})
         Mob([self.sprites], self.textura_solo['inimigo'], posicao=(250, 400), parametros={'grupo_blocos': self.blocos, 'player': self.player})
 
-
-
     def gen_texturassheet(self, caminho):
         texturas = {}
         sheet_img = pygame.image.load(caminho).convert_alpha()
+        temp_atk = []
 
         for nome, data in texturas_sheet.items():
             temp_list = []
@@ -86,6 +86,11 @@ class Cena:
                 temp_list.append(pygame.transform.scale(temp_img, (44, 44)))
                 pos_x += 144
             texturas[nome] = temp_list
+        for nome, data in textura_ataque.items():
+            temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
+                                                    (data['tamanho']))
+            temp_atk.append(pygame.transform.scale(temp_img, (88, 88)))
+        texturas['mago_ataque'] = temp_atk
         return texturas
 
     #  Pega as texturas por imagem(Atualziar o dicionário com o caminhos e informações da imagem)
@@ -104,7 +109,7 @@ class Cena:
     def draw(self):
         self.app.screen.fill('black')
         self.app.screen.blit(self.textura_solo['fundo'], self.camera.apply(self.entidade ))
-        self.camera.draw(self.app.screen,self.sprites)
+        self.camera.draw(self.app.screen, self.sprites)
         if not self.player.alive():
             self.app.screen.blit("GAME OVER")
         
