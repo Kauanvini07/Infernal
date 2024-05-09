@@ -39,6 +39,7 @@ class Jogo:
         pygame.quit()
         sys.exit()
 
+
 if __name__ == '__main__':
     game = Jogo()
     game.run()

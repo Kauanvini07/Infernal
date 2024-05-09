@@ -20,8 +20,8 @@ texturas_por_imagem = {
 textura_ataque = {
     'cajado_madeira1': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood1.png', 'tamanho': (32, 32)},
     'cajado_madeira2': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood2.png', 'tamanho': (32, 32)},
-    'cajado_madeira3': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood3.png', 'tamanho': (44, 32)},
-    'cajado_madeira4': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood4.png', 'tamanho': (44, 32)},
+    'cajado_madeira3': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood3.png', 'tamanho': (32, 32)},
+    'cajado_madeira4': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood4.png', 'tamanho': (32, 32)},
     'cajado_madeira5': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood5.png', 'tamanho': (32, 32)},
     'cajado_madeira6': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood6.png', 'tamanho': (32, 32)}
 }

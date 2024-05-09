@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.sprites['mago_idle'][self.sprite_atual]
         self.rect = self.image.get_rect(topleft=posicao)
 
-        #Parametros
+        # Parametros
         if parametros:
             self.grupo_blocos = parametros['grupo_blocos']
             self.grupo_inimigos = parametros['grupo_inimigos']
@@ -41,31 +41,73 @@ class Player(pygame.sprite.Sprite):
         self.cooldownhit = 3000
 
         # Velocidade
-        self.velocity = pygame.math .Vector2()
+        self.velocity = pygame.math.Vector2()
 
         # Animacao
         self.esquerda = False
         self.ultimo_check = 0
+        self.ultima_acao = "nenhuma"
 
         # Atacando
         self.atacando = 0
         self.bolas = []
+        self.retangulo_atualizado = True
 
     def animar(self, acao):
+        print(acao)
         cooldown_ani = 50
+
+        if self.ultima_acao == "nenhuma":
+            self.ultima_acao = acao
+        if self.ultima_acao != acao:
+            self.sprite_atual = -1
+            self.ultima_acao = acao
+
+        # Atualiza o sprite atual, para o frame posterior.
+
         if pygame.time.get_ticks() - self.ultimo_check > cooldown_ani:
-            self.sprite_atual +=1
+            self.sprite_atual += 1
             self.ultimo_check = pygame.time.get_ticks()
-            
-        if self.sprite_atual >= len(self.sprites[acao]):
+
+        print(self.sprite_atual, len(self.sprites[acao]))
+        if self.sprite_atual >= len(self.sprites[acao]):    # Se chegar no ultimo frame, volta para o primeiro.
+            self.atacando = 0  # Atualiza o status de ataque para 0.
+            if not self.atacando and not self.retangulo_atualizado:  # Quando não está atacando, reseta a flag para permitir atualização novamente
+                self.retangulo_atualizado = True
+                tempy = self.rect.bottom
+                print(acao)
+                print("RESETANDO o atual:", tempy)
+                print("O pé atual:", self.rect.top)
+                self.rect.top = tempy  # Define o canto inferior esquerdo
+                print("Atualizado:", tempy)
+                print("Pé atualizado", self.rect.bottom)
+                print("atualizado",acao)
+                acao = "mago_idle"
             self.sprite_atual = 0
-            self.atacando = 0
-            
-        if self.esquerda:
+
+        if self.esquerda:  # Se o personagem estiver andando para esquerda, espelha a imagem e atualiza o frame.
+            if self.atacando and self.retangulo_atualizado:
+                tempy = self.rect.top
+                print(acao)
+                print("O atual:", tempy)
+                print("O pé atual:", self.rect.bottom)
+                self.rect.bottom = tempy  # Define o canto inferior
+                self.retangulo_atualizado = False  # Marca que o retângulo foi atualizado
+                print(self.rect.bottom)
             self.image = pygame.transform.flip(self.sprites[acao][int(self.sprite_atual)], self.esquerda, False)
         else:
+            if self.atacando and self.retangulo_atualizado:
+                tempy = self.rect.top
+                print(acao)
+                print("O atual:", tempy)
+                print("O pé atual:", self.rect.bottom)
+                self.rect.bottom = tempy  # Define o canto inferior esquerdo
+                self.retangulo_atualizado = False  # Marca que o retângulo foi atualizado
+                print("Atualizado:", tempy)
+                print("Pé atualizado", self.rect.bottom)
+                print("atualizado", acao)
             self.esquerda = False
-            self.image = self.sprites[acao][int(self.sprite_atual)]
+            self.image = self.sprites[acao][int(self.sprite_atual)]  # Atualiza o frame.
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -92,15 +134,15 @@ class Player(pygame.sprite.Sprite):
         if self.atacando == 1:
             if len(self.bolas) == 0:
                 self.animar('mago_ataque')
-                print(self.rect.x,self.rect.y)
+                print(self.rect.x, self.rect.y)
                 nova_blfg = BolaDeFogo(self.app, self.rect.x, self.rect.y, 5, self.grupo_bola)
                 nova_blfg.som.play()
                 self.bolas.append(nova_blfg)
         elif self.atacando == 2:
-            self.animar('mago_ataque') 
+            self.animar('mago_ataque')
             print(self.grupo_inimigos)
             for inimigo in self.grupo_inimigos:
-                d = ((inimigo.rect.x - self.rect.x )**2 + ( inimigo.rect.y - self.rect.y)**2 )**(1/2)
+                d = ((inimigo.rect.x - self.rect.x) ** 2 + (inimigo.rect.y - self.rect.y) ** 2) ** (1 / 2)
                 print(d)
                 if 32 > d:
                     print("DAno")
@@ -112,7 +154,7 @@ class Player(pygame.sprite.Sprite):
         self.checar_colisoes('horizontal')
         self.rect.y += self.velocity.y * PLAYER_SPEED
         self.checar_colisoes('vertical')
-        
+
         if self.velocity.x == 0 and self.velocity.y == 0:
             self.animar('mago_idle')
         else:
@@ -134,16 +176,16 @@ class Player(pygame.sprite.Sprite):
         if direcao == "horizontal":
             for block in self.grupo_blocos:
                 if block.rect.colliderect(self.rect):
-                    if self.velocity.x > 0: # Movimento para direita
+                    if self.velocity.x > 0:  # Movimento para direita
                         self.rect.right = block.rect.left
-                    else:                   # Movimento para esquerda
+                    else:  # Movimento para esquerda
                         self.rect.left = block.rect.right
         if direcao == "vertical":
             for block in self.grupo_blocos:
                 if block.rect.colliderect(self.rect):
-                    if self.velocity.y > 0: # Movimento para cima
+                    if self.velocity.y > 0:  # Movimento para cima
                         self.rect.bottom = block.rect.top
-                    else:                   # Movimento para baixo
+                    else:  # Movimento para baixo
                         self.rect.top = block.rect.bottom
 
     def hit(self):
@@ -169,4 +211,3 @@ class Player(pygame.sprite.Sprite):
                 if abs(bola.x - self.grupo_inimigos.x) <= 25 and abs(bola.y - self.grupo_inimigos.y) <= 38:
                     inimigo.kill()
         """
-        
