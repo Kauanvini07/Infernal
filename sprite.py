@@ -10,7 +10,7 @@ class Entidade(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = image
         self.rect = self.image.get_rect(topleft=posicao)
-
+        
     def update(self):  # Sobreescrvendo o update do pygames.sprite.Sprite
         pass
 
@@ -26,21 +26,29 @@ class Mob(Entidade):
 
         self.velocity = pygame.math.Vector2()
         self.tempo_geral = pygame.time.get_ticks()
+        self.seguirInimigo = 0
 
     def move(self):
         self.tempo_geral = pygame.time.get_ticks()
-        try:
-            dx, dy = self.player.rect.x - self.rect.x, self.player.rect.y - self.rect.y
-            dist = math.hypot(dx, dy)
-            dx, dy = dx / dist, dy / dist
-            self.rect.x += dx * MOB_SPEED
-            self.checar_colisoes('horizontal',dx,dy)
-            self.rect.y += dy * MOB_SPEED
-            self.checar_colisoes('vertical', dx,dy)
-            if self.player.rect.colliderect(self.rect):
-                self.player.hit()
-        except Exception as e:
-            print(e)
+        raio =  32*10
+        
+        if self.seguirInimigo:
+            try:
+                dx, dy = self.player.rect.x - self.rect.x, self.player.rect.y - self.rect.y
+                dist = math.hypot(dx, dy)
+                dx, dy = dx / dist, dy / dist
+                self.rect.x += dx * MOB_SPEED
+                self.checar_colisoes('horizontal',dx,dy)
+                self.rect.y += dy * MOB_SPEED
+                self.checar_colisoes('vertical', dx,dy)
+                if self.player.rect.colliderect(self.rect):
+                    self.player.hit()
+            except Exception as e:
+                print(e)
+        else:
+            d = ((self.player.rect.x - self.rect.x )**2 + (self.player.rect.y - self.rect.y)**2 )**(1/2)
+            if raio > d :
+                self.seguirInimigo = 1
 
     def checar_colisoes(self, direcao,dx,dy):
         if direcao == "horizontal":

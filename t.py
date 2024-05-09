@@ -1,5 +1,6 @@
-import pygame
 import sys
+
+import pygame
 
 # Inicializar o Pygame
 pygame.init()
@@ -38,6 +39,7 @@ def calculate_health_percentage():
     elapsed_time = (current_time - start_time) / 1000  # Converter para segundos
     remaining_health = initial_health - health_loss_speed * elapsed_time
     return max(remaining_health, 0) / initial_health
+
 
 # Loop principal do jogo
 while True:
