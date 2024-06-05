@@ -101,7 +101,8 @@ class Cena:
 
     def update(self):
         self.sprites.update()  # É um metodo implicito, o pygames.sprite.Sprite, já contém o .update()
-        self.camera.update(self.player)
+        if not self.player.atacando and self.player.retangulo_atualizado:
+            self.camera.update(self.player)
 
     def draw(self):
 
