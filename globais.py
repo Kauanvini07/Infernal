@@ -6,7 +6,7 @@ FPS = 24
 
 PLAYER_SPEED = 10
 MOB_SPEED = 2
-MAX_HP = 10
+MAX_HP = 100
 #vida
 # Definir cores
 BLACK = (0, 0, 0)

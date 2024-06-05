@@ -5,7 +5,8 @@ import pygame
 from globais import *
 from player import Player
 from sprite import Entidade, Mob
-from texturas import textura_ataque, texturas_por_imagem, texturas_sheet, relacao_mapas
+from texturas import (relacao_mapas, textura_ataque, texturas_por_imagem,
+                      texturas_sheet)
 
 
 class Camera:
@@ -36,10 +37,6 @@ class Camera:
 class Cena:
     def __init__(self, app):
         self.app = app  # Recebe o objeto Jogo
-
-        self.mapas = [nome for nome in relacao_mapas]
-        self.mapa_atual = self.mapas[0]
-        print(self.mapa_atual)
         self.proxmap = None
         self.fundo = None
         self.textura_solo = self.gen_textura_solo()
@@ -49,17 +46,20 @@ class Cena:
         self.blocos = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
         self.bola_de_fogo = pygame.sprite.Group()
-        self.player = Player(app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo})
-
+        self.player = Player(app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
+        self.mapas = [nome for nome in relacao_mapas]
+        if self.player.jogador['Salve']:
+            self.mapa_atual = self.player.jogador['mapa']
+        else:
+            self.mapa_atual = self.mapas[0]
 
         # Player
-        self.camera = Camera(self.app,800,600)
+        self.camera = Camera(self.app,800,800)
 
         self.criar_mapa(self.mapa_atual)
 
 
     def criar_mapa(self, nome):
-        print(relacao_mapas)
         self.fundo = pygame.transform.scale(pygame.image.load(relacao_mapas[nome]['fundo']), (relacao_mapas[nome]['tamanho']))
         with open(relacao_mapas[nome]['caminho']) as data:
             map = []
@@ -75,12 +75,14 @@ class Cena:
                         Entidade([self.sprites, self.blocos], posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
                     if bloco == '2': # salva o proximo mapa
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
-                    if bloco == 3: # spawna os bixo
-                        print("entrou if mob")
+                    if bloco == '3': # spawna os bixo
                         Mob([self.sprites, self.inimigos], self.textura_solo['inimigo'], posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
                     if bloco == '1': # Nascimento do player]
                         self.player.rect.x = x * BLOCO_TAM
                         self.player.rect.y = y * BLOCO_TAM
+                        if self.player.jogador['Salve']:
+                            self.player.rect.x = self.player.jogador['x']
+                            self.player.rect.y = self.player.jogador['y']
                     x += 1
                 y += 1
 
@@ -92,9 +94,11 @@ class Cena:
         self.blocos = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
         self.bola_de_fogo = pygame.sprite.Group()
-        self.player = Player(self.app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo})
+        
+        self.player = Player(self.app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
+        self.player.jogador['mapa'] = self.mapa_atual
+        self.player.jogador['Salve'] = 0
         self.camera = Camera(self.app,800,600)
-
         self.criar_mapa(self.mapa_atual)
 
     def gen_texturassheet(self, caminho):

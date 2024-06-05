@@ -44,7 +44,7 @@ class Mob(Entidade):
                 if self.player.rect.colliderect(self.rect):
                     self.player.hit()
             except Exception as e:
-                print(e)
+                ...
         else:
             d = ((self.player.rect.x - self.rect.x )**2 + (self.player.rect.y - self.rect.y)**2 )**(1/2)
             if raio > d :

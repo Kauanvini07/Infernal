@@ -8,13 +8,14 @@ from globais import *  # Arquivo com todas as variaveis globlais
 
 
 class Jogo:
-    def __init__(self):
+    def __init__(self,idplayer):
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600))
         self.clock = pygame.time.Clock()
         self.musica_tema = pygame.mixer.Sound('sons/tema.wav')
         self.musica_tema.play(-1)
         self.running = True
+        self.id = idplayer
         self.cena = Cena(self)
 
     def run(self):
