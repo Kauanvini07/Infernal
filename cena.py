@@ -5,12 +5,12 @@ import pygame
 from globais import *
 from player import Player
 from sprite import Entidade, Mob
-from texturas import textura_ataque, texturas_por_imagem, texturas_sheet
+from texturas import textura_ataque, texturas_por_imagem, texturas_sheet, relacao_mapas
 
 
 class Camera:
 
-    def __init__(self, game,width,height):
+    def __init__(self, game, width, height):
 
         self.game = game
         self.width = width
@@ -29,7 +29,7 @@ class Camera:
     def update(self,jogador):
         
         self.x = max(self.width - SCREEN_WIDTH,min(0,int(self.width/2) - jogador.rect.centerx))
-        self.y =  max(self.height - SCREEN_HEIGHT,min(0,int(self.height/2) - jogador.rect.centery))
+        self.y = max(self.height - SCREEN_HEIGHT,min(0,int(self.height/2) - jogador.rect.centery))
         self.camera = pygame.Rect(self.x,self.y,self.width, self.height)
        
 
@@ -37,6 +37,11 @@ class Cena:
     def __init__(self, app):
         self.app = app  # Recebe o objeto Jogo
 
+        self.mapas = [nome for nome in relacao_mapas]
+        self.mapa_atual = self.mapas[0]
+        print(self.mapa_atual)
+        self.proxmap = None
+        self.fundo = None
         self.textura_solo = self.gen_textura_solo()
         self.textura_sheet = self.gen_texturassheet('imgs/ALL Spritesheet.png')
         self.sprites = pygame.sprite.Group()
@@ -46,28 +51,51 @@ class Cena:
         self.bola_de_fogo = pygame.sprite.Group()
         self.player = Player(app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo})
 
-        with open(texturas_por_imagem['fundo']['csv']) as data:
+
+        # Player
+        self.camera = Camera(self.app,800,600)
+
+        self.criar_mapa(self.mapa_atual)
+
+
+    def criar_mapa(self, nome):
+        print(relacao_mapas)
+        self.fundo = pygame.transform.scale(pygame.image.load(relacao_mapas[nome]['fundo']), (relacao_mapas[nome]['tamanho']))
+        with open(relacao_mapas[nome]['caminho']) as data:
             map = []
             data = csv.reader(data, delimiter=",")
             x, y = 0, 0
             for linha in data:
                 map.append(list(linha))
-                
+
             for linha in map:
                 x = 0
                 for bloco in linha:
-                    if bloco == "0":
-                        Entidade([self.sprites, self.blocos], posicao=(x*BLOCO_TAM, y*BLOCO_TAM))
-                    if bloco == '2':
-                        Mob([self.sprites,self.inimigos], self.textura_solo['inimigo'], posicao=(x*BLOCO_TAM, y*BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
-                    if bloco == '1':
-                        self.player.rect.x = x*BLOCO_TAM
-                        self.player.rect.y = y*BLOCO_TAM
+                    if bloco == "0": #Cria as paredes # self.textura_solo['tijolo'],
+                        Entidade([self.sprites, self.blocos], posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
+                    if bloco == '2': # salva o proximo mapa
+                        self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
+                    if bloco == 3: # spawna os bixo
+                        print("entrou if mob")
+                        Mob([self.sprites, self.inimigos], self.textura_solo['inimigo'], posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
+                    if bloco == '1': # Nascimento do player]
+                        self.player.rect.x = x * BLOCO_TAM
+                        self.player.rect.y = y * BLOCO_TAM
                     x += 1
                 y += 1
 
-        # Player
+    def resetar_mapa(self, nome):
+        self.mapa_atual = nome
+        self.proxmap = relacao_mapas[nome]['prox_map']
+        self.sprites = pygame.sprite.Group()
+        self.entidade = Entidade([self.sprites])
+        self.blocos = pygame.sprite.Group()
+        self.inimigos = pygame.sprite.Group()
+        self.bola_de_fogo = pygame.sprite.Group()
+        self.player = Player(self.app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo})
         self.camera = Camera(self.app,800,600)
+
+        self.criar_mapa(self.mapa_atual)
 
     def gen_texturassheet(self, caminho):
         texturas = {}
@@ -80,13 +108,14 @@ class Cena:
             for i in range(data['quant']):
                 temp_img = pygame.Surface.subsurface(sheet_img,
                                                      pygame.Rect((pos_x, data['posicao'][1]), data['tamanho']))
-                temp_list.append(pygame.transform.scale(temp_img, (44, 44)))
+                temp_list.append(pygame.transform.scale(temp_img, (32, 32)))
                 pos_x += 144
             texturas[nome] = temp_list
         for nome, data in textura_ataque.items():
             temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
                                                     (data['tamanho']))
-            temp_atk.append(pygame.transform.scale(temp_img, (88, 88)))
+            temp_atk.append(pygame.transform.scale(temp_img, (64, 64))) # Para animação funcionar, tem que ser
+                                                                             # o dobro do tamanho do sprite(ver acima)
         texturas['mago_ataque'] = temp_atk
         return texturas
 
@@ -103,11 +132,13 @@ class Cena:
         self.sprites.update()  # É um metodo implicito, o pygames.sprite.Sprite, já contém o .update()
         if not self.player.atacando and self.player.retangulo_atualizado:
             self.camera.update(self.player)
+        if self.player.rect.x == self.proxmap[1] and self.player.rect.y == self.proxmap[2]: #verifica a troca de mapa
+            self.resetar_mapa(self.proxmap[0])
 
     def draw(self):
 
         self.app.screen.fill('black')
-        self.app.screen.blit(self.textura_solo['fundo'], self.camera.apply(self.entidade ))
+        self.app.screen.blit(self.fundo, self.camera.apply(self.entidade ))
         self.camera.draw(self.app.screen, self.sprites)
 
         # Desenhar o círculo externo do medidor de vida
