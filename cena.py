@@ -77,10 +77,10 @@ class Cena:
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
                     if bloco == '3': # spawna os bixo
                         Mob([self.sprites, self.inimigos], self.textura_solo['inimigo'], posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
-                    if bloco == '1': # Nascimento do player]
+                    if bloco == '1': # Nascimento do player
                         self.player.rect.x = x * BLOCO_TAM
                         self.player.rect.y = y * BLOCO_TAM
-                        if self.player.jogador['Salve']:
+                        if self.player.jogador['Salve'] == 1:
                             self.player.rect.x = self.player.jogador['x']
                             self.player.rect.y = self.player.jogador['y']
                     x += 1

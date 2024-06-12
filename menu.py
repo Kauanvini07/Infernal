@@ -11,9 +11,10 @@ de um site que me ensinou sobre tal biblioteca.
 faz registro de cliente
 e se pro adm no nome na tela de login era na sessão de Admir
 '''
-banco = Banco_de_Dados()
-registro = banco.visualizar_jogadores()  # fiz como global ja que sera usada durante todo codigo
-del banco
+
+with Banco_de_Dados() as banco:
+    registro = banco.visualizar_jogadores()  # fiz como global ja que sera usada durante todo codigo
+
 class Menu():
     def __init__(self):
         # configs de tela
@@ -41,10 +42,9 @@ class Menu():
             global registro
             if self.id_t.get() and self.nome_t.get():
                 try:
-                    banco = Banco_de_Dados()
-                    banco.adicionar_jogador(idplayer=self.id_t.get(),name=self.nome_t.get(), vida=100, dano=10, Class=1 )
-                    registro.append(banco.visualizar_jogador(self.id_t.get()))
-                    del banco
+                    with Banco_de_Dados() as banco:
+                        banco.adicionar_jogador(idplayer=self.id_t.get(),name=self.nome_t.get(), vida=100, dano=10, Class=1 )
+                        registro.append(banco.visualizar_jogador(self.id_t.get()))
                     
                     janela_registro.destroy()
                 except Exception as erro:
@@ -93,7 +93,7 @@ class Menu():
 
     def logar(self):
         global registro
-
+        print(registro)
         if registro:  # checa se Há registros.
             # caso falte algum dado de entrada ele retorna sem tirar nada.
             if not self.nome.get():

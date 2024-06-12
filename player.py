@@ -23,12 +23,12 @@ class BolaDeFogo(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self, app, groups, image, posicao: tuple, parametros: dict,idplayer=1, name="Jogador1", vida=10, dano=10, Class=1,maps='m01',x=0,y=0):
         super().__init__(groups)
-        banco = Banco_de_Dados()
-        self.jogador = banco.visualizar_jogador(idplayer)
-        if self.jogador is None:
-            banco.adicionar_jogador(idplayer, name, vida, dano, Class)
-            self.jogador = banco.visualizar_jogador(idplayer=1)
-        del banco
+        with Banco_de_Dados() as banco:
+            self.jogador = banco.visualizar_jogador(idplayer)
+            if self.jogador is None:
+                banco.adicionar_jogador(idplayer, name, vida, dano, Class)
+                self.jogador = banco.visualizar_jogador(idplayer=1)
+        
         self.id = self.jogador['idplayer']
         self.name = self.jogador['name']
         self.classe = 'Mago' if self.jogador['Class'] == 1 else 'Gerreiro' if self.jogador['Class'] == 2 else 'Arqueiro'
@@ -192,9 +192,9 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         
-        banco = Banco_de_Dados()
-        banco.upadate_player(self.jogador)
-        del banco
+        with Banco_de_Dados() as banco:
+            banco.upadate_player(self.jogador)
+        
         self.input()
         if self.atacando == 0:
             self.move()

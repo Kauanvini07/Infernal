@@ -17,10 +17,15 @@ class Banco_de_Dados:
         # Criando um cursor para executar consultas SQL
         self.cursor = self.conn.cursor()
 
-    def __del__(self):
-        # Fechando o cursor e a conexão
-        self.cursor.close()
+    def __enter__(self):
+        return self
+        
+    
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        # Fechando a conexão com o banco de dados
         self.conn.close()
+
         
     def show_tabels(self):
         # Exemplo de consulta SQL
@@ -39,8 +44,8 @@ class Banco_de_Dados:
         self.conn.commit()
 
     def visualizar_jogador(self, idplayer):
-        queryPlayer = "SELECT * FROM player, posicao WHERE player_idplayer = %s"
-        self.cursor.execute(queryPlayer, (idplayer,))
+        queryPlayer = "SELECT * FROM player, posicao WHERE player_idplayer = %s and player_idplayer = %s"
+        self.cursor.execute(queryPlayer, (idplayer,idplayer))
         jogador = self.cursor.fetchone()
         if jogador:
             jogador_dict = {
@@ -101,6 +106,7 @@ class Banco_de_Dados:
         queryPos = "INSERT INTO posicao (mapa, x, y, player_idplayer) VALUES (%s, %s, %s, %s)"
         self.cursor.execute(queryPos, (maps, x, y, idplayer))  # Correção aqui
         self.conn.commit()
+
 
 """
 if __name__ == "__main__":
