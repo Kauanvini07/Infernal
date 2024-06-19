@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.app = app
         self.sprite_atual = 0
         self.sprites = image
+        print(image)
         self.image = self.sprites['mago_idle'][self.sprite_atual]
         if self.jogador['Salve']:
             self.rect = self.image.get_rect(topleft=(self.jogador['x'],self.jogador['y']))
@@ -124,6 +125,9 @@ class Player(pygame.sprite.Sprite):
             self.atacando = 1
         if keys[pygame.K_k]:
             self.atacando = 2
+        if keys[pygame.K_F6]:
+            with Banco_de_Dados() as banco:
+                banco.upadate_player(self.jogador)
 
     def ataque(self):
         if self.atacando == 1:
@@ -190,11 +194,7 @@ class Player(pygame.sprite.Sprite):
             self.jogador['vida'] = self.hp
             self.ultimohit = pygame.time.get_ticks()
 
-    def update(self):
-        
-        with Banco_de_Dados() as banco:
-            banco.upadate_player(self.jogador)
-        
+    def update(self):  
         self.input()
         if self.atacando == 0:
             self.move()

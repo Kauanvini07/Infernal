@@ -5,9 +5,7 @@ import pygame
 from globais import *
 from player import Player
 from sprite import Entidade, Mob
-from texturas import (relacao_mapas, textura_ataque, texturas_por_imagem,
-                      texturas_sheet)
-
+from texturas import *
 
 class Camera:
 
@@ -40,13 +38,13 @@ class Cena:
         self.proxmap = None
         self.fundo = None
         self.textura_solo = self.gen_textura_solo()
-        self.textura_sheet = self.gen_texturassheet('imgs/ALL Spritesheet.png')
+        #self.textura_sheet = self.gen_texturassheet('imgs/ALL Spritesheet.png')
         self.sprites = pygame.sprite.Group()
         self.entidade = Entidade([self.sprites])
         self.blocos = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
         self.bola_de_fogo = pygame.sprite.Group()
-        self.player = Player(app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
+        self.player = Player(app,[self.sprites], self.gen_texturassheet('imgs/ALL Spritesheet.png', texturas_sheet), (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
         self.mapas = [nome for nome in relacao_mapas]
         if self.player.jogador['Salve']:
             self.mapa_atual = self.player.jogador['mapa']
@@ -76,7 +74,7 @@ class Cena:
                     if bloco == '2': # salva o proximo mapa
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
                     if bloco == '3': # spawna os bixo
-                        Mob([self.sprites, self.inimigos], self.textura_solo['inimigo'], posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
+                        Mob([self.sprites], self.gen_texturassheet('imgs/Zombie.png', texturas_zombie), posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
                     if bloco == '1': # Nascimento do player
                         self.player.rect.x = x * BLOCO_TAM
                         self.player.rect.y = y * BLOCO_TAM
@@ -95,32 +93,42 @@ class Cena:
         self.inimigos = pygame.sprite.Group()
         self.bola_de_fogo = pygame.sprite.Group()
         
-        self.player = Player(self.app,[self.sprites], self.textura_sheet, (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
+        self.player = Player(self.app,[self.sprites], self.gen_texturassheet('imgs/ALL Spritesheet.png', texturas_sheet), (0,0), parametros={'grupo_blocos': self.blocos, 'grupo_inimigos': self.inimigos, 'grupo_bola': self.bola_de_fogo},idplayer=self.app.id)
         self.player.jogador['mapa'] = self.mapa_atual
         self.player.jogador['Salve'] = 0
         self.camera = Camera(self.app,800,600)
         self.criar_mapa(self.mapa_atual)
 
-    def gen_texturassheet(self, caminho):
+    def gen_texturassheet(self, caminho, textura):
         texturas = {}
         sheet_img = pygame.image.load(caminho).convert_alpha()
+        print(sheet_img)
         temp_atk = []
 
-        for nome, data in texturas_sheet.items():
+        for nome, data in textura.items():
             temp_list = []
             pos_x = data['posicao'][0]
+            print(pos_x)
             for i in range(data['quant']):
+                print(f"Index: {i}. Quant: {data['quant']}, Posicao: {data['posicao'][1]}, Tam:{data['tamanho']}, pos_x: {pos_x}")
                 temp_img = pygame.Surface.subsurface(sheet_img,
                                                      pygame.Rect((pos_x, data['posicao'][1]), data['tamanho']))
-                temp_list.append(pygame.transform.scale(temp_img, (32, 32)))
-                pos_x += 144
+                if data['tamanho'][0] != 32:
+                    temp_list.append(pygame.transform.scale(temp_img, (32, 32)))
+                elif data['tipo'] == 'inimigo' and data['tamanho'][0] == 32:
+                    temp_list.append(pygame.transform.scale(temp_img, (44, 44)))
+                else:
+                    temp_list.append(temp_img)
+                pos_x += data['dist_x'] # Atualiza a posição do X
             texturas[nome] = temp_list
-        for nome, data in textura_ataque.items():
-            temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
-                                                    (data['tamanho']))
-            temp_atk.append(pygame.transform.scale(temp_img, (64, 64))) # Para animação funcionar, tem que ser
-                                                                             # o dobro do tamanho do sprite(ver acima)
-        texturas['mago_ataque'] = temp_atk
+            #Tratando os sprites de ataque do Mago
+            if nome == 'mago_ataque':
+                for nome, data in textura_ataque.items():
+                        temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
+                                                                (data['tamanho']))
+                        temp_atk.append(pygame.transform.scale(temp_img, (64, 64))) # Para animação funcionar, tem que ser
+                                                                                        # o dobro do tamanho do sprite(ver acima)
+                texturas['mago_ataque'] = temp_atk
         return texturas
 
     #  Pega as texturas por imagem(Atualziar o dicionário com o caminhos e informações da imagem)

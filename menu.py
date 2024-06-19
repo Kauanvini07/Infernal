@@ -152,6 +152,5 @@ class Menu():
             bg='#65cca9', fg='black', relief='ridge',
             width=10, height=2, command=self.login.destroy).place(x=50, y=250)
 
-        self.login.mainloop()
-        
+        self.login.mainloop() 
 Menu()

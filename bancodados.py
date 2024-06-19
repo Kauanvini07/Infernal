@@ -9,7 +9,7 @@ class Banco_de_Dados:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="12347",
+            password="admin",
             database="GameBD",
             auth_plugin='mysql_native_password'  # Adicionando o parâmetro auth_plugin
         )
