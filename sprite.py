@@ -25,6 +25,7 @@ class Mob(pygame.sprite.Sprite):
         if parametros:
             self.grupo_blocos = parametros['grupo_blocos']
             self.player = parametros['player']
+        
         self.sprite_atual = 0
         self.sprites = image
         self.image = self.sprites['zombie_idle'][self.sprite_atual]
@@ -38,7 +39,6 @@ class Mob(pygame.sprite.Sprite):
         self.esquerda = False
         self.ultimo_check = 0
         self.ultima_acao = "nenhuma"
-        self.retangulo_atualizado = True
         self.atacando = 0
 
     def animar(self, acao):
@@ -46,6 +46,7 @@ class Mob(pygame.sprite.Sprite):
 
         if self.ultima_acao == "nenhuma":
             self.ultima_acao = acao
+
         if self.ultima_acao != acao:
             self.sprite_atual = -1
             self.ultima_acao = acao
@@ -55,52 +56,54 @@ class Mob(pygame.sprite.Sprite):
         if pygame.time.get_ticks() - self.ultimo_check > cooldown_ani:
             self.sprite_atual += 1
             self.ultimo_check = pygame.time.get_ticks()
+
         if self.sprite_atual >= len(self.sprites[acao]):    # Se chegar no ultimo frame, volta para o primeiro.
             self.atacando = 0  # Atualiza o status de ataque para 0.
-            if not self.atacando and not self.retangulo_atualizado:  # Quando não está atacando, reseta a flag para permitir atualização novamente
-                self.retangulo_atualizado = True
-                tempy = self.rect.bottom
-                self.rect.top = tempy  # Define o canto inferior esquerdo
-                acao = "zombie_idle"
             self.sprite_atual = 0
 
         if self.esquerda:  # Se o personagem estiver andando para esquerda, espelha a imagem e atualiza o frame.
-            if self.atacando and self.retangulo_atualizado:
-                tempy = self.rect.top
-                self.rect.bottom = tempy  # Define o canto inferior
-                self.retangulo_atualizado = False  # Marca que o retângulo foi atualizado
             self.image = pygame.transform.flip(self.sprites[acao][int(self.sprite_atual)], self.esquerda, False)
+
         else:
-            if self.atacando and self.retangulo_atualizado:
-                tempy = self.rect.top
-                self.rect.bottom = tempy  # Define o canto inferior esquerdo
-                self.retangulo_atualizado = False  # Marca que o retângulo foi atualizado
             self.esquerda = False
             self.image = self.sprites[acao][int(self.sprite_atual)]  # Atualiza o frame.
+
+    def ataque(self):
+        if self.atacando == 1:
+            self.animar('zombie_ataque')
+            self.player.hit()
 
     def move(self):
         self.tempo_geral = pygame.time.get_ticks()
         raio =  32*10
         
+        d = ((self.player.rect.x - self.rect.x )**2 + (self.player.rect.y - self.rect.y)**2 )**(1/2)
+        if raio > d :
+            self.seguirInimigo = 1
+        else:
+            self.seguirInimigo = 0
+
         if self.seguirInimigo:
             try:
                 self.animar('zombie_run')
                 dx, dy = self.player.rect.x - self.rect.x, self.player.rect.y - self.rect.y
                 dist = math.hypot(dx, dy)
                 dx, dy = dx / dist, dy / dist
+                if dx < 0:
+                    self.esquerda = True
+                else:
+                    self.esquerda = False
                 self.rect.x += dx * MOB_SPEED
                 self.checar_colisoes('horizontal',dx,dy)
                 self.rect.y += dy * MOB_SPEED
                 self.checar_colisoes('vertical', dx,dy)
                 if self.player.rect.colliderect(self.rect):
-                    self.player.hit()
+                    self.atacando = 1
+
             except Exception as e:
                 ...
         else:
             self.animar('zombie_idle')
-            d = ((self.player.rect.x - self.rect.x )**2 + (self.player.rect.y - self.rect.y)**2 )**(1/2)
-            if raio > d :
-                self.seguirInimigo = 1
 
     def checar_colisoes(self, direcao,dx,dy):
         if direcao == "horizontal":
@@ -119,4 +122,8 @@ class Mob(pygame.sprite.Sprite):
                         self.rect.top = block.rect.bottom
 
     def update(self):
-        self.move()
+        if self.atacando == 0:
+            self.move()
+        elif self.atacando:
+            self.animar('zombie_ataque')
+            self.ataque()

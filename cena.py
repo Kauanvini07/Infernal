@@ -70,11 +70,11 @@ class Cena:
                 x = 0
                 for bloco in linha:
                     if bloco == "0": #Cria as paredes # self.textura_solo['tijolo'],
-                        Entidade([self.sprites, self.blocos], posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
+                        Entidade([self.sprites, self.blocos], self.textura_solo['tijolo'],posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
                     if bloco == '2': # salva o proximo mapa
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
                     if bloco == '3': # spawna os bixo
-                        Mob([self.sprites], self.gen_texturassheet('imgs/Zombie.png', texturas_zombie), posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
+                        Mob([self.sprites, self.inimigos], self.gen_texturassheet('imgs/Zombie.png', texturas_zombie), posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
                     if bloco == '1': # Nascimento do player
                         self.player.rect.x = x * BLOCO_TAM
                         self.player.rect.y = y * BLOCO_TAM
@@ -122,7 +122,7 @@ class Cena:
                 pos_x += data['dist_x'] # Atualiza a posição do X
             texturas[nome] = temp_list
             #Tratando os sprites de ataque do Mago
-            if nome == 'mago_ataque':
+            if data['tipo'] == 'player' and not 'mago_ataque' in texturas:
                 for nome, data in textura_ataque.items():
                         temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
                                                                 (data['tamanho']))

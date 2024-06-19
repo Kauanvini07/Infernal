@@ -130,14 +130,7 @@ class Player(pygame.sprite.Sprite):
                 banco.upadate_player(self.jogador)
 
     def ataque(self):
-        if self.atacando == 1:
-            if len(self.bolas) == 0:
-                self.animar('mago_ataque')
-                nova_blfg = BolaDeFogo(self.app, self.rect.x, self.rect.y, 5, self.grupo_bola)
-                nova_blfg.som.play()
-                self.bolas.append(nova_blfg)
-        elif self.atacando == 2:
-            self.animar('mago_ataque')
+        if self.atacando == 2:
             for inimigo in self.grupo_inimigos:
                 d = ((inimigo.rect.x - self.rect.x) ** 2 + (inimigo.rect.y - self.rect.y) ** 2) ** (1 / 2)
                 if 32 > d:
@@ -172,14 +165,17 @@ class Player(pygame.sprite.Sprite):
     def checar_colisoes(self, direcao):
         if direcao == "horizontal":
             for block in self.grupo_blocos:
-                if block.rect.colliderect(self.rect):
+                self.temp = self.rect.copy()
+                if block.rect.colliderect(pygame.Rect.inflate(self.temp, -10, -10)):
                     if self.velocity.x > 0:  # Movimento para direita
                         self.rect.right = block.rect.left
                     else:  # Movimento para esquerda
                         self.rect.left = block.rect.right
         if direcao == "vertical":
             for block in self.grupo_blocos:
-                if block.rect.colliderect(self.rect):
+                self.temp = self.rect.copy()
+                if block.rect.colliderect(pygame.Rect.inflate(self.temp, -10, -10)):
+                    print(block.rect.colliderect(self.rect))
                     if self.velocity.y > 0:  # Movimento para cima
                         self.rect.bottom = block.rect.top
                     else:  # Movimento para baixo
@@ -198,7 +194,7 @@ class Player(pygame.sprite.Sprite):
         self.input()
         if self.atacando == 0:
             self.move()
-        elif self.atacando:
+        elif self.atacando == 2:
             self.animar('mago_ataque')
             self.ataque()
         """
