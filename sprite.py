@@ -108,14 +108,16 @@ class Mob(pygame.sprite.Sprite):
     def checar_colisoes(self, direcao,dx,dy):
         if direcao == "horizontal":
             for block in self.grupo_blocos:
-                if block.rect.colliderect(self.rect):
+                self.temp = self.rect.copy()
+                if block.rect.colliderect(pygame.Rect.inflate(self.temp,-1,-1)):
                     if dx > 0:  # Movimento para direita
                         self.rect.right = block.rect.left
                     else:  # Movimento para esquerda
                         self.rect.left = block.rect.right
         if direcao == "vertical":
             for block in self.grupo_blocos:
-                if block.rect.colliderect(self.rect):
+                self.temp = self.rect.copy()
+                if block.rect.colliderect(pygame.Rect.inflate(self.temp,-7,-5)):
                     if dy > 0:  # Movimento para cima
                         self.rect.bottom = block.rect.top
                     else:  # Movimento para baixo
