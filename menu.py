@@ -14,6 +14,7 @@ e se pro adm no nome na tela de login era na sessão de Admir
 
 with Banco_de_Dados() as banco:
     registro = banco.visualizar_jogadores()  # fiz como global ja que sera usada durante todo codigo
+    print(registro)
 
 class Menu():
     def __init__(self):
@@ -23,6 +24,7 @@ class Menu():
         self.login.title('Tela de login.')
         self.login.geometry('200x300')
         self.login.resizable(width=False, height=False)
+        self.login.config(bg='#51355e')
         self.configura()
         # função apos confirmar
         
@@ -58,34 +60,35 @@ class Menu():
         janela_registro.grab_set()
         janela_registro.title('Registros.')
         janela_registro.geometry('200x300')
+        janela_registro.config(bg='#51355e')
 
         janela_registro.resizable(width=False, height=False)
         # totalmente visual da sessão de registro.
         Label(janela_registro, text='Registro', justify='center',
-            font='Arial 24', fg='#65cca9').place(x=50, y=0)
-        Label(janela_registro, width='40', bg='#65cca9').place(x=0, y=40)
+            font='Arial 24', fg='#cf000f',bg='#51355e').place(x=30, y=0)
+        Label(janela_registro, width='40',bg='#ff8c00').place(x=0, y=40)
 
         Label(janela_registro, text='Identidade: ',
-            font='Arial 10', fg='#acbfa3').place(x=0, y=70)
+            font='Arial 10',bg='#51355e', fg='#ffd700').place(x=0, y=70)
 
         Label(janela_registro, text='Nome: ',
-            font='Arial 10', fg='#acbfa3').place(x=0, y=130)
+            font='Arial 10',bg='#51355e', fg='#ffd700').place(x=0, y=130)
 
         # interaveis dentro da sessão de resgistro
-        self.id_t = Entry(janela_registro, width='17', bg='#dcf4da',
+        self.id_t = Entry(janela_registro, width='17', bg='#2c3e50',
                     font='Arial 14', borderwidth='3', relief='ridge')
         self.id_t.place(x=4, y=100)
 
-        self.nome_t = Entry(janela_registro, width='17', bg='#dcf4da',
+        self.nome_t = Entry(janela_registro, width='17',bg='#2c3e50',
                         font='Arial 14', borderwidth='3', relief='ridge')
         self.nome_t.place(x=4, y=160)
 
         Button(janela_registro, text='Regitra/sair', font='Arial 7',
-            bg='#65cca9', fg='black', relief='ridge',
+            bg='#2c3e50',  fg='#ffd700', relief='ridge',
             width=10, height=2, command=entrada).place(x=10, y=250)
 
         Button(janela_registro, text='Sair', font='Arial 7',
-            bg='#65cca9', fg='black', relief='ridge',
+            bg='#2c3e50',  fg='#ffd700', relief='ridge',
             width=10, height=2, command=janela_registro.destroy).place(x=100, y=250)
 
         janela_registro.mainloop()
@@ -118,40 +121,39 @@ class Menu():
 
     def configura(self):
         # visual não interagivel
-        Label(self.login, text='Login', justify='center',
-            font='Arial 24', fg='#65cca9').place(x=60, y=0)
-        Label(self.login, width='40', bg='#65cca9').place(x=0, y=40)
+        Label(self.login, text='INFERNAL', justify='center',
+            font='Arial 24', fg='#cf000f',bg='#51355e').place(x=20, y=0)
+        Label(self.login, width='40', bg='#ff8c00').place(x=0, y=40)
 
-        Label(self.login, text='Identificador: ', font='Arial 10', fg='#acbfa3').place(x=0, y=70)
+        Label(self.login, text='Identificador: ', font='Arial 10', fg='#ffd700',bg='#51355e').place(x=0, y=70)
 
-        Label(self.login, text='Nome_Player: ', font='Arial 10', fg='#acbfa3').place(x=0, y=130)
+        Label(self.login, text='Nome_Player: ', font='Arial 10', fg='#ffd700',bg='#51355e').place(x=0, y=130)
 
 
         # interagiveis de Nome, login e confirmação:flat, groove,
         # raised, ridge, solid, or sunken
 
-        self.id = Entry(self.login, width='17', bg='#dcf4da',
+        self.id = Entry(self.login, width='17', bg='#2c3e50',
                     font='Arial 14', borderwidth='3', relief='ridge')
         self.id.place(x=4, y=100)
 
         # senha correta 12345
         self.nome = Entry(self.login, show='*',
-                    width='17', bg='#dcf4da',
-                    font='Arial 14', borderwidth='3', relief='ridge')
+                    width='17',
+                    font='Arial 14', borderwidth='3', relief='ridge',bg='#2c3e50')
         self.nome.place(x=4, y=160)
 
-        Button(self.login, text='Registrar', font='Arial 10',
-            bg='#65cca9', fg='black', relief='ridge',
-            width=10, height=2, command=self.registrar).place(x=5, y=200)
+        Button(self.login, text='Registrar', font='Arial 10', fg='#ffd700', relief='ridge',
+            width=10, height=2, command=self.registrar,bg='#2c3e50').place(x=5, y=200)
 
-        Button(self.login, text='Confirmar', font='Arial 10',
-            bg='#65cca9', fg='black', relief='ridge',
-            width=10, height=2, command=self.logar).place(x=105, y=200)
+        Button(self.login, text='Confirmar', font='Arial 10', fg='#ffd700', relief='ridge',
+            width=10, height=2, command=self.logar,bg='#2c3e50').place(x=105, y=200)
 
         Button(self.login, text='sair', font='Arial 10',
-            bg='#65cca9', fg='black', relief='ridge',
+            bg='#2c3e50', fg='#ffd700', relief='ridge',
             width=10, height=2, command=self.login.destroy).place(x=50, y=250)
 
         self.login.mainloop()
- 
+
+
 Menu()
