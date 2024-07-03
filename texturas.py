@@ -21,7 +21,10 @@ texturas_zombie = {
 relacao_mapas = {
     'm01': {'tipo': 'barco', 'caminho': 'mapcsv/m01.csv', 'fundo': 'imgs/maps/m01.png', 'tamanho': (960, 960), 'prox_map': 'm02'},
     'm02': {'tipo': 'barco', 'caminho': 'mapcsv/m02.csv', 'fundo': 'imgs/maps/m02.png', 'tamanho': (960, 960), 'prox_map': 'm03'},
-    'm03': {'tipo': 'vila', 'caminho': 'mapcsv/m03.csv', 'fundo': 'imgs/maps/m03.png', 'tamanho': (1088, 832), 'prox_map': 'm04'}
+    'm03': {'tipo': 'vila', 'caminho': 'mapcsv/m03.csv', 'fundo': 'imgs/maps/m03.png', 'tamanho': (1088, 832), 'prox_map': 'm04'},
+    'm04': {'tipo': 'floresta', 'caminho': 'mapcsv/m04.csv', 'fundo': 'imgs/maps/m04.png', 'tamanho': (1600, 1440), 'prox_map': 'm05'},
+    'm05': {'tipo': 'floresta', 'caminho': 'mapcsv/m05.csv', 'fundo': 'imgs/maps/m05.png', 'tamanho': (960, 1440), 'prox_map': 'm06'},
+    'm06': {'tipo': 'floresta', 'caminho': 'mapcsv/m06.csv', 'fundo': 'imgs/maps/m06.png', 'tamanho': (960, 1472), 'prox_map': 'm07'}
 }
 
 # Insira aqui a imagem, o tipo e o caminho dela para ser carregado.
