@@ -75,6 +75,8 @@ class Cena:
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
                     if bloco == '3': # spawna os bixo
                         Mob([self.sprites, self.inimigos], self.gen_texturassheet('imgs/Zombie.png', texturas_zombie), posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
+                    if bloco == '4': # spawna o boss:
+                        Mob([self.sprites, self.inimigos], self.gen_textura_boss(), posicao=(x * BLOCO_TAM, y * BLOCO_TAM), parametros={'grupo_blocos': self.blocos, 'player': self.player})
                     if bloco == '1': # Nascimento do player
                         self.player.rect.x = x * BLOCO_TAM
                         self.player.rect.y = y * BLOCO_TAM
@@ -140,6 +142,33 @@ class Cena:
                                                     (data['tamanho']))
         return texturas
 
+    def gen_textura_boss(self):
+        texturas = {}
+        temp_atk = []
+        temp_idle = []
+        temp_corre = []
+
+        for nome, data in textura_idle_king.items():
+            temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
+                                                    (data['tamanho']))
+
+            temp_idle.append(temp_img)
+        texturas['zombie_idle'] = temp_idle
+
+        for nome, data in textura_corre_king.items():
+            temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
+                                                    (data['tamanho']))
+            temp_corre.append(temp_img)
+        texturas['zombie_run'] = temp_corre
+
+        for nome, data in textura_ataque_king.items():
+            temp_img = pygame.transform.scale(pygame.image.load(data['caminho']).convert_alpha(),
+                                                    (data['tamanho']))
+            temp_atk.append(temp_img)
+        texturas['zombie_ataque'] = temp_atk
+
+        return texturas
+    
     def update(self):
         self.sprites.update()  # É um metodo implicito, o pygames.sprite.Sprite, já contém o .update()
         if not self.player.atacando and self.player.retangulo_atualizado:
