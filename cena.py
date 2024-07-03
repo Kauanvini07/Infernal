@@ -70,7 +70,9 @@ class Cena:
                 x = 0
                 for bloco in linha:
                     if bloco == "0": #Cria as paredes # self.textura_solo['tijolo'],
-                        Entidade([self.sprites, self.blocos], self.textura_solo['tijolo'],posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
+                        #Para teste de parede, faz a parede ter um sprite pra verificar a posição
+                        #Entidade([self.sprites, self.blocos], self.textura_solo['tijolo'],posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
+                        Entidade([self.sprites, self.blocos], posicao=(x * BLOCO_TAM, y * BLOCO_TAM))
                     if bloco == '2': # salva o proximo mapa
                         self.proxmap = (relacao_mapas[nome]['prox_map'], x * BLOCO_TAM, y * BLOCO_TAM)
                     if bloco == '3': # spawna os bixo
