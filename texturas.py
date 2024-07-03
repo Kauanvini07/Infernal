@@ -35,6 +35,27 @@ texturas_por_imagem = {
     'inimigo_hit': {'tipo': 'inimigo', 'caminho': 'imgs/inimigo_hit.png', 'tamanho': (32,32)}
 }
 
+textura_ataque_king = {
+    'king1': {'tipo': 'ataque', 'caminho': 'imgs/KingSlime/Attack/KingSlimeAttack1.png', 'tamanho': (64, 64)},
+    'king2': {'tipo': 'ataque', 'caminho': 'imgs/KingSlime/Attack/KingSlimeAttack2.png', 'tamanho': (64, 64)},
+    'king3': {'tipo': 'ataque', 'caminho': 'imgs/KingSlime/Attack/KingSlimeAttack3.png', 'tamanho': (64, 64)},
+    'king4': {'tipo': 'ataque', 'caminho': 'imgs/KingSlime/Attack/KingSlimeAttack4.png', 'tamanho': (64, 64)},
+    'king5': {'tipo': 'ataque', 'caminho': 'imgs/KingSlime/Attack/KingSlimeAttack5.png', 'tamanho': (64, 64)}
+}
+
+textura_idle_king = {
+    'kingidle1': {'tipo': 'idle', 'caminho': 'imgs/KingSlime/Idle/KingSlime_Idle1.png', 'tamanho': (64, 64)},
+    'kingidle2': {'tipo': 'idle', 'caminho': 'imgs/KingSlime/Idle/KingSlime_Idle2.png', 'tamanho': (64, 64)},
+    'kingidle3': {'tipo': 'idle', 'caminho': 'imgs/KingSlime/Idle/KingSlime_Idle3.png', 'tamanho': (64, 64)},
+    'kingidle4': {'tipo': 'idle', 'caminho': 'imgs/KingSlime/Idle/KingSlime_Idle4.png', 'tamanho': (64, 64)}
+}
+
+textura_corre_king = {
+    'kingrun': {'tipo': 'corre', 'caminho': 'imgs/KingSlime/Move/KingSlime_Moving1.png', 'tamanho': (64, 64)},
+    'kingrun2': {'tipo': 'corre', 'caminho': 'imgs/KingSlime/Move/KingSlime_Moving2.png', 'tamanho': (64, 64)},
+    'kingrun3': {'tipo': 'corre', 'caminho': 'imgs/KingSlime/Move/KingSlime_Moving3.png', 'tamanho': (64, 64)}
+}
+
 textura_ataque = {
     'cajado_madeira1': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood1.png', 'tamanho': (32, 32)},
     'cajado_madeira2': {'tipo': 'item', 'caminho': 'imgs/Little Mage/Attack/StaffWood/AttackWood2.png', 'tamanho': (32, 32)},
